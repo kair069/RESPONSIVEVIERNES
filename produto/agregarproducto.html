@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Nuevo Producto</title>
+    <!-- Importar Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="stylesagregar.css">
+</head>
+
+<body class="bg-gray-100">
+    <div class="container mx-auto py-8">
+        <h2 class="text-2xl font-bold mb-4">Agregar Nuevo Producto</h2>
+        <form id="formularioProducto" class="max-w-md bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div class="mb-4">
+                <label for="nombre" class="block text-gray-700 text-sm font-bold mb-2">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Nombre del producto">
+            </div>
+            <div class="mb-4">
+                <label for="descripcion" class="block text-gray-700 text-sm font-bold mb-2">Descripción:</label>
+                <textarea id="descripcion" name="descripcion" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Descripción del producto"></textarea>
+            </div>
+            <div class="mb-4">
+                <label for="precio" class="block text-gray-700 text-sm font-bold mb-2">Precio:</label>
+                <input type="number" id="precio" name="precio" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Precio del producto">
+            </div>
+            <div class="mb-4">
+                <label for="cantidad" class="block text-gray-700 text-sm font-bold mb-2">Cantidad en Stock:</label>
+                <input type="number" id="cantidad" name="cantidad" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Cantidad en stock">
+            </div>
+            <div class="mb-4">
+                <label for="tipo" class="block text-gray-700 text-sm font-bold mb-2">Tipo:</label>
+                <input type="text" id="tipo" name="tipo" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Tipo de producto">
+            </div>
+            <div class="mb-4">
+                <label for="imagen" class="block text-gray-700 text-sm font-bold mb-2">URL de la Imagen:</label>
+                <input type="text" id="imagen" name="imagen" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="URL de la imagen">
+            </div>
+            <div class="flex items-center justify-between">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Agregar Producto</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Importar jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Agregar evento de submit al formulario
+            $('#formularioProducto').on('submit', function(event) {
+                event.preventDefault(); // Evitar el envío del formulario por defecto
+
+                // Obtener los datos del formulario
+                var nombre = $('#nombre').val();
+                var descripcion = $('#descripcion').val();
+                var precio = $('#precio').val();
+                var cantidad = $('#cantidad').val();
+                var tipo = $('#tipo').val();
+                var imagen = $('#imagen').val();
+
+                // Crear el objeto de producto
+                var producto = {
+                    nombre: nombre,
+                    descripcion: descripcion,
+                    precio: precio,
+                    cantidadEnStock: cantidad,
+                    tipo: tipo,
+                    imagen: imagen
+                };
+
+                // Enviar el objeto de producto al backend
+                $.ajax({
+                    url: 'http://localhost:8080/api/productos',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(producto),
+                    success: function(response) {
+                        alert('Producto agregado exitosamente!');
+                        // Limpiar el formulario después de agregar el producto
+                        $('#formularioProducto')[0].reset();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error al agregar el producto:', error);
+                        alert('Error al agregar el producto. Por favor, intenta de nuevo.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

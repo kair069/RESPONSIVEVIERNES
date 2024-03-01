@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tailwind CSS Navbar</title>
+  
+  <!-- Importar Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <!-- Fuente Google Spectral -->
+  <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Estilos personalizados -->
+  <style>
+    /* Aplicar la fuente Spectral a todo el documento */
+    body {
+      font-family: 'Spectral', serif;
+    }
+    /* Estilo para los enlaces del menú de escritorio */
+    .nav-link {
+      font-weight: 700;
+      transition: color 0.5s ease; /* Ajustar la velocidad de la transición */
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+
+  <!-- Navbar -->
+  <nav class="bg-gray-800 p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <a href="#" class="text-white text-xl font-bold">Logo</a>
+      <button id="mobile-menu-btn" class="block lg:hidden focus:outline-none">
+        <svg class="h-6 w-6 fill-current text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path fill-rule="evenodd" d="M4.75 5.75h14.5a.75.75 0 1 1 0 1.5H4.75a.75.75 0 1 1 0-1.5zm0 5h14.5a.75.75 0 1 1 0 1.5H4.75a.75.75 0 1 1 0-1.5zm0 5h14.5a.75.75 0 1 1 0 1.5H4.75a.75.75 0 1 1 0-1.5z"/>
+        </svg>
+      </button>
+      <ul class="hidden lg:flex space-x-4 text-white">
+        <li>
+          <a href="#" class="nav-link flex items-center" onclick="cargarContenido('ruta/contenido1.html')">
+            <img src="home-icon.png" alt="Inicio" class="h-5 w-5 mr-1"> <!-- Agregar un icono de imagen -->
+            Inicio
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link flex items-center" onclick="cargarContenido('../produto/listarproducto.html')">
+            <img src="https://cdn-icons-png.flaticon.com/512/1822/1822045.png" alt="Acerca" class="h-5 w-5 mr-1"> <!-- Agregar un icono de imagen -->
+            Productos
+          </a>
+        </li>
+        <!-- Agregar más elementos del menú aquí -->
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Espacio en blanco para el contenido -->
+  <div id="contenido" class="container mx-auto mt-4 p-4 border border-gray-300 rounded">
+    <!-- Aquí se mostrará el contenido al hacer clic en un elemento del menú -->
+  </div>
+
+  <!-- Importar jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  <!-- Script para mostrar/ocultar el menú móvil -->
+  <script>
+    $(document).ready(function(){
+      $('#mobile-menu-btn').click(function(){
+        $('#mobile-menu').toggleClass('hidden');
+      });
+    });
+
+    // Función para cargar contenido de otra ruta y mostrarlo en el espacio en blanco
+    function cargarContenido(ruta) {
+      fetch(ruta)
+        .then(response => response.text())
+        .then(data => {
+          $('#contenido').html(data);
+        })
+        .catch(error => {
+          console.error('Error al cargar el contenido:', error);
+        });
+    }
+  </script>
+
+</body>
+</html>

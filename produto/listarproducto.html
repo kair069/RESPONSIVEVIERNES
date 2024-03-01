@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Productos</title>
+    <!-- Importar Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="stylesa.css" rel="stylesheet">
+    <style>
+        .menu-icon {
+            width: 24px; /* Adjust as needed */
+            height: 24px; /* Adjust as needed */
+            margin-right: 8px; /* Adjust as needed */
+            vertical-align: middle;
+          }
+      
+          /* Style for menu items */
+          .menu-item {
+            display: flex;
+            align-items: center;
+          }
+          
+            /* Personalización del título */
+            .custom-title {
+              color: red; /* Cambia el color del texto a rojo */
+              font-weight: bold; /* Pone el texto en negrita */
+            }
+    </style>
+</head>
+
+<body>
+    
+    
+    <div class="container">
+        <h2>Listado de Productos</h2>
+        <div class="row">
+            <div class="input-field col s6">
+                <input type="text" id="filtroNombre" placeholder="Filtrar por nombre...">
+                <label for="filtroNombre">Filtrar por nombre</label>
+            </div>
+            <div class="input-field col s6">
+                <input type="text" id="filtroTipo" placeholder="Filtrar por tipo...">
+                <label for="filtroTipo">Filtrar por tipo</label>
+            </div>
+            <div class="col s12">
+                <button class="btn waves-effect waves-light" type="button" id="btnFiltrar">Filtrar</button>
+                
+            </div>
+        </div>
+        <table class="striped responsive-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                    <th>Cantidad en Stock</th>
+                    <th>Tipo</th>
+                    <th>Imagen</th>
+                </tr>
+            </thead>
+            <tbody id="listaProductos">
+                <!-- Aquí se agregarán los productos -->
+            </tbody>
+        </table>
+
+        <div class="btn-container">
+            <a href="agregarproducto2.html" class="btn waves-effect waves-light">Agregar Nuevo Producto</a>
+            <a href="actualizar.html" class="btn waves-effect waves-light">Actualizar</a>
+            
+        </div>
+    </div>
+
+    <!-- Importar jQuery y Materialize JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        // Cuando la página esté lista
+        $(document).ready(function () {
+            // Llamar a la función para cargar los productos
+            cargarProductos();
+
+            // Agregar evento de click al botón de filtrar
+            $('#btnFiltrar').on('click', function () {
+                filtrarProductos();
+            });
+        });
+
+        // Función para cargar los productos desde el backend
+        function cargarProductos() {
+            $.ajax({
+                url: 'http://localhost:8080/api/productos',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    mostrarProductos(response);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al cargar los productos:', error);
+                }
+            });
+        }
+
+        // Función para mostrar los productos en la tabla
+        function mostrarProductos(productos) {
+            // Limpiar la tabla de productos
+            $('#listaProductos').empty();
+    
+            // Iterar sobre los productos y agregarlos a la tabla
+            productos.forEach(function (producto) {
+                var row = `
+                    <tr>
+                        <td>${producto.id}</td>
+                        <td>${producto.nombre}</td>
+                        <td>${producto.descripcion}</td>
+                        <td>${producto.precio}</td>
+                        <td>${producto.cantidadEnStock}</td>
+                        <td>${producto.tipo}</td>
+                        <td><img src="${producto.imagen}" alt="Imagen de ${producto.nombre}" style="max-width: 100px;"></td>
+                        <td>
+                            <button class="btn waves-effect waves-light btn-delete" data-id="${producto.id}">Eliminar</button>
+                            
+                        </td>
+                    </tr>
+                `;
+                $('#listaProductos').append(row);
+            });
+    
+            // Agregar evento de clic al botón de eliminar
+            $('.btn-delete').on('click', function () {
+                var productId = $(this).data('id');
+                eliminarProducto(productId);
+            });
+        }
+
+        // Función para filtrar los productos
+        function filtrarProductos() {
+            var nombre = $('#filtroNombre').val();
+            var tipo = $('#filtroTipo').val();
+            
+            // Construir la URL con los parámetros de filtro
+            var url = 'http://localhost:8080/api/productos/filtrar-por-nombre';
+            var parametros = {};
+            if (nombre !== '') {
+                parametros.nombre = nombre;
+            }
+            if (tipo !== '') {
+                url = 'http://localhost:8080/api/productos/filtrar-por-tipo';
+                parametros.tipo = tipo;
+            }
+        
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                data: parametros, // pasar los parámetros como objeto
+                success: function (response) {
+                    mostrarProductos(response);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al filtrar los productos:', error);
+                }
+            });
+        }
+        
+
+
+        $(document).ready(function() {
+            // Llamar a la función para cargar los productos
+            cargarProductos();
+
+            // Agregar eventos de cambio para los campos de filtro
+            $('#filtroNombre, #filtroTipo').on('input', function () {
+                filtrarProductos();
+            });
+
+            // Agregar evento de clic al botón de eliminar
+            $('.btn-delete').on('click', function() {
+                var productId = $(this).data('id');
+                eliminarProducto(productId);
+            });
+        });
+
+
+
+
+        function eliminarProducto(id) {
+            $.ajax({
+                url: `http://localhost:8080/api/productos/${id}`,
+                type: 'DELETE',
+                success: function (response) {
+                    // Recargar la lista de productos después de eliminar
+                    cargarProductos();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al eliminar el producto:', error);
+                }
+            });
+        }
+    
+        // Llamar a la función para cargar los productos cuando la página esté lista
+        $(document).ready(function () {
+            cargarProductos();
+        });
+
+
+        // Initialize Materialize components
+    $(document).ready(function(){
+        $('.sidenav').sidenav();
+      });
+  
+      // Function to load content into the content area and close sidenav
+      function loadContent(url) {
+        $('#content').load(url);
+      }
+  
+      document.addEventListener('DOMContentLoaded', function() {
+          var elems = document.querySelectorAll('.sidenav');
+          var instances = M.Sidenav.init(elems);
+        }); 
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Venta</title>
+    <!-- Importar jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+<body>
+
+<div class="container">
+    <h3>Crear Venta</h3>
+    <form id="formVenta">
+        <div class="input-field">
+            <label for="clienteNombre">Nombre del Cliente</label>
+            <select id="clienteNombre">
+                <option value="" disabled selected>Seleccione un cliente</option>
+                <!-- Opciones de clientes se llenarán dinámicamente -->
+            </select>
+        </div>
+        <div class="input-field">
+            <label for="clienteDireccion">Dirección del Cliente</label>
+            <input type="text" id="clienteDireccion">
+        </div>
+        <div class="input-field">
+            <label for="clienteContacto">Información de Contacto del Cliente</label>
+            <input type="text" id="clienteContacto">
+        </div>
+        <div class="productos-section">
+            <div class="input-field">
+                <label for="producto1Select">Producto 1</label>
+                <select id="producto1Select">
+                    <option value="" disabled selected>Seleccione un producto</option>
+                    <!-- Opciones de productos se llenarán dinámicamente -->
+                </select>
+            </div>
+            <div class="input-field">
+                <label for="cantidadProducto1">Cantidad de Producto 1</label>
+                <input type="number" id="cantidadProducto1" min="1">
+            </div>
+        </div>
+        <div class="productos-section">
+            <div class="input-field">
+                <label for="producto2Select">Producto 2</label>
+                <select id="producto2Select">
+                    <option value="" disabled selected>Seleccione un producto</option>
+                    <!-- Opciones de productos se llenarán dinámicamente -->
+                </select>
+            </div>
+            <div class="input-field">
+                <label for="cantidadProducto2">Cantidad de Producto 2</label>
+                <input type="number" id="cantidadProducto2" min="1">
+            </div>
+        </div>
+        <div class="input-field">
+            <label for="servicioSelect">Seleccione un Servicio</label>
+            <select id="servicioSelect">
+                <option value="" disabled selected>Seleccione un servicio</option>
+                <!-- Opciones de servicios se llenarán dinámicamente -->
+            </select>
+        </div>
+        <div class="input-field">
+            <label for="cantidadServicio">Cantidad de Servicio</label>
+            <input type="number" id="cantidadServicio" min="1">
+        </div>
+        <button class="btn waves-effect waves-light" type="submit">Crear Venta</button>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function(){
+        // Cargar opciones de clientes, productos y servicios al cargar la página
+        cargarClientes();
+        cargarProductos();
+        cargarServicios();
+
+        $('#formVenta').submit(function(event){
+            event.preventDefault();
+            // Obtener los datos del formulario
+            var clienteId = $('#clienteNombre').val();
+            var clienteDireccion = $('#clienteDireccion').val();
+            var clienteContacto = $('#clienteContacto').val();
+            var producto1Id = $('#producto1Select').val();
+            var cantidadProducto1 = $('#cantidadProducto1').val();
+            var producto2Id = $('#producto2Select').val();
+            var cantidadProducto2 = $('#cantidadProducto2').val();
+            var servicioId = $('#servicioSelect').val();
+            var cantidadServicio = $('#cantidadServicio').val();
+
+            // Construir el objeto de ventaRequest
+            var ventaRequest = {
+                clienta: {
+                    id: clienteId,
+                    direccion: clienteDireccion,
+                    informacionContacto: clienteContacto
+                },
+                itemsProductos: [
+                    {
+                        producto: {
+                            id: producto1Id,
+                            nombre: $('#producto1Select option:selected').text(), // Nombre del producto seleccionado
+                            precio: parseFloat($('#producto1Select option:selected').data('precio')) // Precio del producto seleccionado
+                        },
+                        cantidad: cantidadProducto1
+                    },
+                    {
+                        producto: {
+                            id: producto2Id,
+                            nombre: $('#producto2Select option:selected').text(), // Nombre del producto seleccionado
+                            precio: parseFloat($('#producto2Select option:selected').data('precio')) // Precio del producto seleccionado
+                        },
+                        cantidad: cantidadProducto2
+                    }
+                ],
+                itemsServicios: [
+                    {
+                        servicio: {
+                            id: servicioId,
+                            nombre: $('#servicioSelect option:selected').text(), // Nombre del servicio seleccionado
+                            precio: parseFloat($('#servicioSelect option:selected').data('precio')) // Precio del servicio seleccionado
+                        },
+                        cantidad: cantidadServicio
+                    }
+                ]
+            };
+
+            // Realizar la solicitud POST al backend
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:8080/api/ventas/crearVenta', // Reemplaza 'puerto' con el puerto real de tu backend
+                contentType: 'application/json',
+                data: JSON.stringify(ventaRequest),
+                success: function(response) {
+                    // Manejar la respuesta del backend si es necesario
+                    console.log('Venta creada:', response);
+                    alert('¡Venta creada exitosamente!');
+                },
+                error: function(xhr, status, error) {
+                    // Manejar errores si la solicitud falla
+                    console.error('Error al crear la venta:', error);
+                    alert('Error al crear la venta. Por favor, inténtalo de nuevo.');
+                }
+            });
+        });
+
+        // Función para cargar las opciones de clientes desde el backend
+        function cargarClientes() {
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:8080/api/clientes', // Reemplaza 'puerto' con el puerto real de tu backend
+                success: function(clientes) {
+                    // Llenar el menú desplegable de clientes con los nombres obtenidos del backend
+                    var selectClientes = $('#clienteNombre');
+                    $.each(clientes, function(index, cliente) {
+                        selectClientes.append($('<option>', {
+                            value: cliente.id,
+                            text: cliente.nombre
+                        }));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al cargar los clientes:', error);
+                }
+            });
+        }
+
+        // Función para cargar las opciones de productos desde el backend
+        function cargarProductos() {
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:8080/api/productos', // Reemplaza 'puerto' con el puerto real de tu backend
+                success: function(productos) {
+                    // Llenar los menús desplegables de productos con las opciones obtenidas del backend
+                    var selectProductos1 = $('#producto1Select');
+                    var selectProductos2 = $('#producto2Select');
+                    $.each(productos, function(index, producto) {
+                        selectProductos1.append($('<option>', {
+                            value: producto.id,
+                            text: producto.nombre,
+                            'data-precio': producto.precio // Almacenar el precio como atributo de datos en la opción
+                        }));
+                        selectProductos2.append($('<option>', {
+                            value: producto.id,
+                            text: producto.nombre,
+                            'data-precio': producto.precio // Almacenar el precio como atributo de datos en la opción
+                        }));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al cargar los productos:', error);
+                }
+            });
+        }
+
+        // Función para cargar las opciones de servicios desde el backend
+        function cargarServicios() {
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:8080/api/servicios', // Reemplaza 'puerto' con el puerto real de tu backend
+                success: function(servicios) {
+                    // Llenar el menú desplegable de servicios con las opciones obtenidas del backend
+                    var selectServicios = $('#servicioSelect');
+                    $.each(servicios, function(index, servicio) {
+                        selectServicios.append($('<option>', {
+                            value: servicio.id,
+                            text: servicio.nombre,
+                            'data-precio': servicio.precio // Almacenar el precio como atributo de datos en la opción
+                        }));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al cargar los servicios:', error);
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

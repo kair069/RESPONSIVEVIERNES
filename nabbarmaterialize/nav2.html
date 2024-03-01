@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobile Navigation</title>
+  <!-- Import Materialize CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <style>
+    /* Optional custom styles */
+    body {
+      padding-top: 0px;
+      /* Adjust based on your header height */
+    }
+
+    /* Style for icon */
+    .menu-icon {
+      width: 24px;
+      /* Adjust as needed */
+      height: 24px;
+      /* Adjust as needed */
+      margin-right: 8px;
+      /* Adjust as needed */
+      vertical-align: middle;
+    }
+
+    /* Style for menu items */
+    .menu-item {
+      display: flex;
+      align-items: center;
+    }
+
+    /* Personalización del título */
+    .custom-title {
+      color: red;
+      /* Cambia el color del texto a rojo */
+      font-weight: bold;
+      /* Pone el texto en negrita */
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <div class="nav-wrapper blue">
+      <a href="#" class="brand-logo center"><img src="https://cdn-icons-png.flaticon.com/512/1822/1822045.png "
+          alt="Logo" style="width: 50px; height: 50px;"></a>
+      <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+      <ul class="right hide-on-med-and-down">
+        <li><a href="#" onclick="loadContent('ruta1/index.html'); $('.sidenav').sidenav('close');"
+            class="menu-item"><img src="https://cdn-icons-png.flaticon.com/512/1822/1822045.png" alt="Icon"
+              class="menu-icon">Link 1</a></li>
+        <li><a href="#" onclick="loadContent('ruta2/index.html'); $('.sidenav').sidenav('close');"
+            class="menu-item"><img src="https://cdn-icons-png.flaticon.com/512/1822/1822045.png" alt="Icon"
+              class="menu-icon">Link 2</a></li>
+        <li><a href="#" onclick="loadContent('ruta3/index.html'); $('.sidenav').sidenav('close');"
+            class="menu-item"><img src="https://cdn-icons-png.flaticon.com/512/1822/1822045.png" alt="Icon"
+              class="menu-icon">Link 3</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <ul class="sidenav" id="mobile-demo">
+    <li><a href="#" onclick="loadContent('../produto/listarproducto.html'); $('.sidenav').sidenav('close');"
+        class="menu-item"><img src="https://cdn-icons-png.flaticon.com/512/1822/1822045.png" alt="Icon"
+          class="menu-icon">Link 1</a></li>
+    <li><a href="#" onclick="loadContent('../servicio/mequedoindex4.html'); $('.sidenav').sidenav('close');"
+        class="menu-item"><img src="https://cdn-icons-png.freepik.com/512/9727/9727444.png" alt="Icon"
+          class="menu-icon">Link 2</a></li>
+    <li><a href="#" onclick="loadContent('ruta3/index.html'); $('.sidenav').sidenav('close');" class="menu-item"><img
+          src="https://cdn-icons-png.flaticon.com/512/1822/1822045.png" alt="Icon" class="menu-icon">Link 3</a></li>
+  </ul>
+
+  <!-- Content -->
+  <div id="content" class="section">
+    <!-- Contenido principal -->
+    <div class="container">
+      <h4>Aplicaciones</h4>
+      <div class="row">
+        <div class="col s12 m7">
+          <div class="card">
+            <div class="card-image">
+              <img
+                src="https://www.mobil.com.mx/lubricantes/-/media/project/wep/mobil/mobil-mx/image-bottlesbanner/updated/fb-og.jpg">
+              <span class="card-title">Productos</span>
+            </div>
+            <div class="card-content">
+              <p>Aqui tenemos todos los productos apra tu empresa</p>
+            </div>
+            <div class="card-action">
+              <a href="../produto/listarproducto.html">Haz Clik Aqui</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12 m7">
+          <div class="card">
+            <div class="card-image">
+              <img src="https://autodinamico.mx/wp-content/uploads/2020/06/Servicios-AD-1.jpg">
+              <span class="card-title">Servicios</span>
+            </div>
+            <div class="card-content">
+              <p>Aqui tenemos todos los Servicios apra tu empresa</p>
+            </div>
+            <div class="card-action">
+              <a href="../servicio/mequedoindex4.html">Haz Clik Aqui</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Agrega más tarjetas según sea necesario -->
+    </div>
+  </div>
+
+  </div>
+
+  <!-- Import jQuery and Materialize JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    // Initialize Materialize components
+    $(document).ready(function () {
+      $('.sidenav').sidenav();
+    });
+
+    // Function to load content into the content area and close sidenav
+    function loadContent(url) {
+      $('#content').load(url);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var elems = document.querySelectorAll('.sidenav');
+      var instances = M.Sidenav.init(elems);
+    });
+  </script>
+</body>
+
+</html>

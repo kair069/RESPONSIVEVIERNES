@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Precio Total</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .producto-imagen {
+            max-width: 100px;
+            max-height: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2>Calculadora de Precio Total</h2>
+        <form id="precioForm">
+            <div class="form-group">
+                <label for="buscarProducto">Buscar Producto:</label>
+                <input type="text" class="form-control" id="buscarProducto" onkeyup="buscarProductos()"
+                    placeholder="Buscar por nombre...">
+            </div>
+            <div class="form-group">
+                <label for="productos">Productos:</label>
+                <select class="form-control" id="productos" multiple></select>
+            </div>
+            <div class="form-group">
+                <label for="cantidadProducto">Cantidad:</label>
+                <input type="number" class="form-control" id="cantidadProducto" value="1" min="1">
+            </div>
+            <div class="form-group">
+                <label for="cantidadProducto2">Cantidad Producto 2:</label>
+                <input type="number" class="form-control" id="cantidadProducto2" value="1" min="1">
+            </div>
+            <div class="form-group">
+                <label for="buscarServicio">Buscar Servicio y Otros Productos:</label>
+                <input type="text" class="form-control" id="buscarServicio" onkeyup="buscarServicios()"
+                    placeholder="Buscar por nombre...">
+            </div>
+            <div class="form-group">
+                <label for="servicios">Servicios y otros productos:</label>
+                <select class="form-control" id="servicios" multiple></select>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="calcularPrecioTotal()">Calcular Precio Total</button>
+            <button type="button" class="btn btn-primary" onclick="limpiarSeleccion()">Limpiar selección</button>
+        </form>
+        <div id="resultado" class="mt-3"></div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        // Función para cargar productos desde el servidor
+        function cargarProductos() {
+            $.get("http://localhost:8080/api/productos", function (data) {
+                $("#productos").empty(); // Limpiar opciones anteriores
+                data.forEach(function (producto) {
+                    // Agregar opción con el nombre y precio del producto
+                    $("#productos").append('<option value="' + producto.id + '">' + producto.nombre + ' - Precio: ' + producto.precio + '</option>');
+                });
+            });
+        }
+
+        // Función para cargar servicios desde el servidor
+        function cargarServicios() {
+            $.get("http://localhost:8080/api/servicios", function (data) {
+                $("#servicios").empty(); // Limpiar opciones anteriores
+                data.forEach(function (servicio) {
+                    // Agregar opción con el nombre y precio del servicio
+                    $("#servicios").append('<option value="' + servicio.id + '">' + servicio.nombre + ' - Precio: ' + servicio.precio + '</option>');
+                });
+            });
+        }
+
+        // Función para buscar productos según el texto ingresado
+        function buscarProductos() {
+            var filtro = $("#buscarProducto").val().toUpperCase();
+            $("#productos option").each(function () {
+                var nombreProducto = $(this).text().toUpperCase();
+                if (nombreProducto.indexOf(filtro) > -1) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
+        // Función para buscar servicios según el texto ingresado
+        function buscarServicios() {
+            var filtro = $("#buscarServicio").val().toUpperCase();
+            $("#servicios option").each(function () {
+                var nombreServicio = $(this).text().toUpperCase();
+                if (nombreServicio.indexOf(filtro) > -1) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
+        // Función para calcular el precio total
+        function calcularPrecioTotal() {
+            var idProductos = $("#productos").val();
+            var cantidadesProductos = []; // Array para almacenar las cantidades de los productos seleccionados
+            var idServicios = $("#servicios").val();
+        
+            // Obtener las cantidades de los productos seleccionados
+            $("#productos option:selected").each(function () {
+                var cantidad = prompt("Ingrese la cantidad para " + $(this).text(), 1);
+                if (cantidad !== null) {
+                    cantidadesProductos.push(parseInt(cantidad));
+                }
+            });
+        
+            // Verificar si se ingresaron las cantidades para todos los productos seleccionados
+            if (cantidadesProductos.length !== idProductos.length) {
+                alert("Debe ingresar la cantidad para todos los productos seleccionados.");
+                return;
+            }
+        
+            var requestData = {
+                idsProductos: idProductos,
+                cantidadesProductos: cantidadesProductos,
+                idsServicios: idServicios
+            };
+        
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:8080/api/ventas/calcular-precio-total",
+                contentType: "application/json",
+                data: JSON.stringify(requestData),
+                success: function (response) {
+                    $('#resultado').text('Precio Total: ' + response.precioTotal + ' | Precio Total con IVA: ' + response.precioConIVA);
+                },
+                error: function (xhr, status, error) {
+                    $('#resultado').text('Error al calcular el precio total');
+                    console.error("Error al calcular el precio total:", error);
+                }
+            });
+        }
+        // Función para limpiar la selección de productos y servicios
+        function limpiarSeleccion() {
+            $('#productos, #servicios').val([]);
+        }
+
+        // Llama a este código cuando la página esté completamente cargada
+        $(document).ready(function () {
+            cargarProductos();
+            cargarServicios();
+        });
+    </script>
+</body>
+
+</html>

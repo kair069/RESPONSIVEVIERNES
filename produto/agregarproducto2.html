@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Nuevo Producto</title>
+    <!-- Importar Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2 class="center-align">Agregar Nuevo Producto</h2>
+        <form id="formularioProducto">
+            <div class="input-field">
+                <input type="text" id="nombre" name="nombre" class="validate" required>
+                <label for="nombre">Nombre</label>
+            </div>
+            <div class="input-field">
+                <textarea id="descripcion" name="descripcion" class="materialize-textarea"></textarea>
+                <label for="descripcion">Descripción</label>
+            </div>
+            <div class="input-field">
+                <input type="number" id="precio" name="precio" class="validate" required>
+                <label for="precio">Precio</label>
+            </div>
+            <div class="input-field">
+                <input type="number" id="cantidad" name="cantidad" class="validate" required>
+                <label for="cantidad">Cantidad en Stock</label>
+            </div>
+            <div class="input-field">
+                <input type="text" id="tipo" name="tipo" class="validate" required>
+                <label for="tipo">Tipo</label>
+            </div>
+            <div class="input-field">
+                <input type="text" id="imagen" name="imagen" class="validate" required>
+                <label for="imagen">URL de la Imagen</label>
+            </div>
+            <div class="center-align">
+                <button type="submit" class="btn waves-effect waves-light">Agregar Producto</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Importar jQuery y Materialize JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Agregar evento de submit al formulario
+            $('#formularioProducto').on('submit', function (event) {
+                event.preventDefault(); // Evitar el envío del formulario por defecto
+
+                // Obtener los datos del formulario
+                var nombre = $('#nombre').val();
+                var descripcion = $('#descripcion').val();
+                var precio = parseFloat($('#precio').val()); // Convertir a número
+                var cantidad = parseInt($('#cantidad').val()); // Convertir a entero
+                var tipo = $('#tipo').val();
+                var imagen = $('#imagen').val();
+
+                // Crear el objeto de producto
+                var producto = {
+                    nombre: nombre,
+                    descripcion: descripcion,
+                    precio: precio,
+                    cantidadEnStock: cantidad,
+                    tipo: tipo,
+                    imagen: imagen
+                };
+
+                // Enviar el objeto de producto al backend
+                $.ajax({
+                    url: 'http://localhost:8080/api/productos',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(producto),
+                    success: function (response) {
+                        alert('Producto agregado exitosamente!');
+                        // Limpiar el formulario después de agregar el producto
+                        $('#formularioProducto')[0].reset();
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error al agregar el producto:', error);
+                        alert('Error al agregar el producto. Por favor, intenta de nuevo.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

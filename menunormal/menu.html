@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galería de Imágenes</title>
+  <!-- Enlaces a Materialize CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <!-- Enlace a Material Icons (para íconos) -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    body {
+      padding-top: 50px; /* Para evitar que el menú tape el contenido */
+    }
+    /* Personalización del título */
+    .custom-title {
+      color: #f44336; /* Color rojo */
+      font-weight: bold; /* Negrita */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de navegación -->
+  
+
+  <!-- Contenido principal -->
+  <div class="container">
+    <h4>Portafolio</h4>
+    <div class="row">
+      <div class="col s12 m6 l4">
+        <a href="../produto/listarproducto.html">
+          <div class="card">
+            <div class="card-image">
+              <img src="https://cdn-icons-png.flaticon.com/512/1822/1822045.png">
+              <span class="card-title custom-title" style="color:red;">Productos</span>
+            </div>
+            <div class="card-content">
+              <p>Aqui Observeras y Controlaras Todos Los productos de La Empresa</p>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="col s12 m6 l4">
+        <a href="ruta_imagen2.html">
+          <div class="card">
+            <div class="card-image">
+              <img src="imagen2.jpg">
+              <span class="card-title">Imagen 2</span>
+            </div>
+            <div class="card-content">
+              <p>Descripción de la imagen 2.</p>
+            </div>
+          </div>
+        </a>
+      </div>
+      <!-- Agrega más tarjetas según sea necesario -->
+    </div>
+  </div>
+
+  <!-- Inicialización de side nav para dispositivos móviles -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('.sidenav');
+      var instances = M.Sidenav.init(elems);
+    });
+  </script>
+</body>
+</html>

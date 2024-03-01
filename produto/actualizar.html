@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar Producto</title>
+    <!-- Importar Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Actualizar Producto</h2>
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="number" id="productId" placeholder="ID del producto">
+                <label for="productId">ID del producto</label>
+            </div>
+            <div class="input-field col s12">
+                <input type="text" id="nombre" placeholder="Nombre del producto">
+                <label for="nombre">Nombre del producto</label>
+            </div>
+            <div class="input-field col s12">
+                <input type="text" id="descripcion" placeholder="Descripción del producto">
+                <label for="descripcion">Descripción del producto</label>
+            </div>
+            <div class="input-field col s12">
+                <input type="number" id="precio" placeholder="Precio del producto">
+                <label for="precio">Precio del producto</label>
+            </div>
+            <div class="input-field col s12">
+                <input type="number" id="cantidadEnStock" placeholder="Cantidad en Stock">
+                <label for="cantidadEnStock">Cantidad en Stock</label>
+            </div>
+            <div class="input-field col s12">
+                <input type="text" id="tipo" placeholder="Tipo de producto">
+                <label for="tipo">Tipo de producto</label>
+            </div>
+            <div class="input-field col s12">
+                <input type="text" id="imagen" placeholder="URL de la imagen">
+                <label for="imagen">URL de la imagen</label>
+            </div>
+
+            <div class="col s12">
+                <button class="btn waves-effect waves-light" onclick="obtenerProducto()">Obtener Producto</button>
+                <button class="btn waves-effect waves-light" onclick="actualizarProducto()">Actualizar Producto</button>
+            </div>
+        </div>
+    </div>
+    <div id="mensaje"></div>
+
+    <!-- Importar jQuery y Materialize JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        function obtenerProducto() {
+            var id = $('#productId').val();
+            // Realiza la solicitud GET para obtener los detalles del producto
+            $.ajax({
+                url: `http://localhost:8080/api/productos/${id}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    mostrarProducto(response);
+                },
+                error: function(xhr, status, error) {
+                    if (xhr.status === 404) {
+                        console.error('El ID del producto no existe.');
+                        // Muestra un mensaje al usuario indicando que el ID no existe
+                        mostrarMensaje('El ID del producto no existe.');
+                    } else {
+                        console.error('Error al obtener el producto:', error);
+                        // Muestra un mensaje de error genérico al usuario
+                        mostrarMensaje('Error al obtener el producto.');
+                    }
+                }
+            });
+        }
+        
+        function mostrarMensaje(mensaje) {
+            // Muestra el mensaje en un elemento en tu interfaz de usuario (puedes ajustar esto según tu HTML)
+            $('#mensaje').text(mensaje);
+        }
+        
+
+        function mostrarProducto(producto) {
+            // Llena los campos del formulario con los datos del producto obtenido
+            $('#nombre').val(producto.nombre);
+            $('#descripcion').val(producto.descripcion);
+            $('#precio').val(producto.precio);
+            $('#cantidadEnStock').val(producto.cantidadEnStock);
+            $('#tipo').val(producto.tipo);
+            $('#imagen').val(producto.imagen);
+            // Llena otros campos según las necesidades de tu formulario
+        }
+
+        function actualizarProducto() {
+            var id = $('#productId').val();
+            // Verifica si el ID está presente
+            if (!id) {
+                console.error('El ID del producto es inválido');
+                // Aquí puedes mostrar un mensaje al usuario indicando que el ID es inválido
+                return;
+            }
+            
+            var producto = {
+                nombre: $('#nombre').val(),
+                descripcion: $('#descripcion').val(),
+                precio: parseFloat($('#precio').val()),
+                cantidadEnStock: parseInt($('#cantidadEnStock').val()),
+                tipo: $('#tipo').val(),
+                imagen: $('#imagen').val()
+                // Incluye otros campos si es necesario
+            };
+        
+            // Realiza la solicitud GET para verificar si el producto existe
+            $.ajax({
+                url: `http://localhost:8080/api/productos/${id}`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    // Producto encontrado, procede con la actualización
+                    // Realiza la solicitud PUT para actualizar el producto
+                    $.ajax({
+                        url: `http://localhost:8080/api/productos/${id}`,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify(producto),
+                        success: function(response) {
+                            console.log('Producto actualizado:', response);
+                            // Aquí puedes mostrar un mensaje de éxito al usuario
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Error al actualizar el producto:', error);
+                            // Aquí puedes mostrar un mensaje de error al usuario
+                        }
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('El ID del producto no existe:', error);
+                    // Aquí puedes mostrar un mensaje al usuario indicando que el ID no existe
+                }
+            });
+        }
+    </script>
+</body>
+</html>

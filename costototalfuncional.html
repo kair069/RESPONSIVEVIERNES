@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Precio Total</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2>Calculadora de Precio Total</h2>
+        <form id="precioForm">
+            <div class="form-group">
+                <label for="buscarProducto">Buscar Producto:</label>
+                <input type="text" class="form-control" id="buscarProducto" onkeyup="buscarProductos()"
+                    placeholder="Buscar por nombre...">
+            </div>
+            <div class="form-group">
+                <label for="productos">Productos:</label>
+                <select class="form-control" id="productos" multiple></select>
+
+                <button type="button" class="btn btn-primary mt-2" onclick="agregarSeleccion('productos')">Agregar
+                    Seleccionados</button>
+                <button type="button" class="btn btn-primary mt-2" onclick="seleccionarProductos()">Seleccionar
+                    Más</button>
+                <button type="button" class="btn btn-primary mt-2" onclick="alternarSeleccion()">Alternar
+                    Selección</button>
+
+
+            </div>
+            <div class="form-group">
+                <label for="cantidadProducto">Cantidad:</label>
+                <input type="number" class="form-control" id="cantidadProducto" value="1" min="1">
+            </div>
+
+
+            <div class="form-group">
+                <label for="buscarServicio">Buscar Servicio y Otros Productos:</label>
+                <input type="text" class="form-control" id="buscarServicio" onkeyup="buscarServicios()"
+                    placeholder="Buscar por nombre...">
+            </div>
+            <div class="form-group">
+                <label for="servicios">Servicios y otros productos:</label>
+                <select class="form-control" id="servicios" multiple></select>
+
+                <button type="button" class="btn btn-primary mt-2" onclick="agregarSeleccion('servicios')">Agregar
+                    Seleccionados</button>
+
+            </div>
+
+
+            <button type="button" class="btn btn-primary" onclick="calcularPrecioTotal()">Calcular Precio Total</button>
+            <button type="button" class="btn btn-primary" onclick="limpiarSeleccion()">Limpiar selección</button>
+        </form>
+        <div id="resultado" class="mt-3"></div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        // Función para cargar productos desde el servidor
+        function cargarProductos() {
+            $.get("http://localhost:8080/api/productos", function (data) {
+                $("#productos").empty(); // Limpiar opciones anteriores
+                data.forEach(function (producto) {
+                    // Crear un elemento de imagen con la URL del producto como origen
+                    var imagenHTML = '<img src="' + producto.imagen + '" alt="' + producto.nombre + '" style="max-width: 200px; max-height: 200px;">'; // Ajusta el tamaño máximo aquí
+                    // Agregar el nombre, precio y la imagen al select
+                    $("#productos").append('<option value="' + producto.id + '">' + producto.nombre + ' - Precio: ' + producto.precio + ' - ' + imagenHTML + '</option>');
+                });
+            });
+        }
+
+        // Función para cargar servicios desde el servidor
+        function cargarServicios() {
+            $.get("http://localhost:8080/api/servicios", function (data) {
+                $("#servicios").empty(); // Limpiar opciones anteriores
+                data.forEach(function (servicio) {
+                    $("#servicios").append('<option value="' + servicio.id + '">' + servicio.nombre + ' - Precio: ' + servicio.precio + '</option>');
+                });
+            });
+        }
+
+        // Función para buscar productos según el texto ingresado
+        function buscarProductos() {
+            var filtro = $("#buscarProducto").val().toUpperCase();
+            $("#productos option").each(function () {
+                if ($(this).text().toUpperCase().indexOf(filtro) > -1) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
+        // Función para buscar servicios según el texto ingresado
+        function buscarServicios() {
+            var filtro = $("#buscarServicio").val().toUpperCase();
+            $("#servicios option").each(function () {
+                if ($(this).text().toUpperCase().indexOf(filtro) > -1) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
+        // Función para calcular el precio total
+        function calcularPrecioTotal() {
+            var idProducto = $("#productos").val();
+            var cantidadProducto = $("#cantidadProducto").val();
+            var idsServicios = $("#servicios").val();
+
+            var requestData = {
+                idsProductos: idProducto,
+                cantidadProducto: cantidadProducto,
+                idsServicios: idsServicios
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:8080/api/ventas/calcular-precio-total",
+                contentType: "application/json",
+                data: JSON.stringify(requestData),
+                success: function (response) {
+                    $('#resultado').text('Precio Total: ' + response.precioTotal + ' | Precio Total con IVA: ' + response.precioConIVA);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error al calcular el precio total:", error);
+                }
+            });
+        }
+
+        // Llama a este código cuando la página esté completamente cargada
+        $(document).ready(function () {
+            cargarProductos();
+            cargarServicios();
+        });
+
+        function limpiarSeleccion() {
+            $('#productos, #servicios').val([]); // Establece el valor de los selectores múltiples como un array vacío
+        }
+
+        // Llama a este código cuando la página esté completamente cargada
+        $(document).ready(function () {
+            cargarProductos();
+            cargarServicios();
+        });
+
+
+        function agregarSeleccion(selectorId) {
+            var seleccionados = $("#" + selectorId + " option:selected"); // Obtener los elementos seleccionados
+
+            // Iterar sobre los elementos seleccionados y agregarlos a la lista
+            seleccionados.each(function () {
+                var nombre = $(this).text();
+                // Aquí puedes agregar el elemento a una lista, a un div, o realizar cualquier acción que desees con los elementos seleccionados
+                console.log("Elemento seleccionado:", nombre);
+            });
+        }
+
+
+        function seleccionarProductos() {
+            // Obtener todos los elementos de la lista de productos
+            var productos = document.getElementById('productos').options;
+
+            // Seleccionar automáticamente los primeros dos elementos
+            productos[0].selected = true;
+            productos[1].selected = true;
+        }
+
+        // Llama a este código cuando la página esté completamente cargada
+        $(document).ready(function () {
+            cargarProductos();
+            cargarServicios();
+        });
+
+        var seleccionando = false; // Variable para rastrear si se está seleccionando o no
+
+        // Función para alternar la selección de productos
+        function alternarSeleccion() {
+            // Obtener todos los elementos de la lista de productos
+            var productos = document.getElementById('productos').options;
+
+            // Si no se está seleccionando, seleccionar los primeros dos elementos
+            if (!seleccionando) {
+                productos[0].selected = true;
+                productos[1].selected = true;
+                seleccionando = true; // Establecer el estado de selección a verdadero
+            } else { // Si se está seleccionando, habilitar la selección individual
+                seleccionando = false; // Establecer el estado de selección a falso
+            }
+        }
+
+        // Llama a este código cuando la página esté completamente cargada
+        $(document).ready(function () {
+            cargarProductos();
+            cargarServicios();
+        });
+
+        // Lógica para permitir la selección individual de productos
+        $('#productos').mousedown(function (e) {
+            if (seleccionando) {
+                e.preventDefault(); // Evitar la selección individual mientras se está seleccionando todo
+                $(this).focus();
+
+                var scroll = this.scrollTop;
+
+                e.target.selected = !e.target.selected;
+
+                this.focus();
+                this.scrollTop = scroll;
+
+                return false;
+            }
+        });
+    </script>
+</body>
+
+</html>

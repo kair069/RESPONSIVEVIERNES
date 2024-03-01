@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Venta</title>
+    <!-- Importar Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Importar jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        .custom-select {
+            font-size: 16px;
+            /* Ajusta el tamaño del texto */
+            padding: 10px;
+            /* Ajusta el relleno dentro del cuadro */
+            height: auto;
+            /* Ajusta la altura del cuadro para adaptarse al contenido */
+            min-height: 48px;
+            /* Altura mínima del cuadro */
+            border-radius: 5px;
+            /* Agrega bordes redondeados al cuadro */
+            border: 1px solid #ccc;
+            /* Agrega un borde al cuadro */
+        }
+
+        /* Estilo para el botón cuando se presiona Ctrl */
+        .ctrl-pressed {
+            background-color: #ff9800;
+            /* Cambiar a tu color deseado */
+            color: #fff;
+            /* Cambiar a tu color deseado */
+        }
+
+        /* Estilo para el botón cuando se hace clic con el mouse */
+        .mouse-clicked {
+            background-color: #4caf50;
+            /* Cambiar a tu color deseado */
+            color: #fff;
+            /* Cambiar a tu color deseado */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h3 class="header">Crear Venta</h3>
+        <form id="formVenta" class="col s12">
+            <div class="input-field col s12">
+                <label for="clienteNombre"></label>
+                <select id="clienteNombre" class="browser-default">
+                    <option value="" disabled selected>Seleccione un cliente</option>
+                    <!-- Opciones de clientes se llenarán dinámicamente -->
+                </select>
+            </div>
+            <div class="input-field col s12">
+                <label for="clienteDireccion">Dirección del Cliente</label>
+                <input type="text" id="clienteDireccion">
+            </div>
+            <div class="input-field col s12">
+                <label for="clienteContacto">Información de Contacto del Cliente</label>
+                <input type="text" id="clienteContacto">
+            </div>
+            <div class="productos-section">
+                <div class="input-field col s12">
+                    <label for="producto1Select">P1</label>
+                    <select id="producto1Select" class="browser-default">
+                        <option value="" disabled selected></option>
+                        <!-- Opciones de productos se llenarán dinámicamente -->
+                    </select>
+                </div>
+                <div class="input-field col s12">
+                    <label for="cantidadProducto1">Cantidad de Producto 1</label>
+                    <input type="number" id="cantidadProducto1" min="1">
+                </div>
+            </div>
+            <div class="productos-section">
+                <div class="input-field col s12">
+                    <label for="producto2Select">P2</label>
+                    <select id="producto2Select" class="browser-default">
+                        <option value="" disabled selected></option>
+                        <!-- Opciones de productos se llenarán dinámicamente -->
+                    </select>
+                </div>
+                <div class="input-field col s12">
+                    <label for="cantidadProducto2">Cantidad de Producto 2</label>
+                    <input type="number" id="cantidadProducto2" min="1">
+                </div>
+            </div>
+            <div class="input-field col s12">
+                <label for="servicioSelect">Servicios</label>
+                <select id="servicioSelect" class="browser-default custom-select" multiple>
+                    <option value="" disabled selected></option>
+                    <!-- Opciones de servicios se llenarán dinámicamente -->
+                </select>
+            </div>
+            <!-- <div class="input-field col s12">
+                <label for="cantidadServicio">Cantidad de Servicio</label>
+                <input type="number" id="cantidadServicio" min="1">
+            </div> -->
+            <button class="btn waves-effect waves-light" type="submit">Crear Venta</button>
+
+        </form>
+        <br>
+        <div class="row">
+
+            <div class="col s12">
+                <button id="limpiarSeleccion" class="btn waves-effect waves-light red col s12 m4">Limpiar Servicios</button>
+                <button id="seleccionarServicios" class="btn waves-effect waves-light col s12 m4">Seleccionar Servicios</button>
+                <button id="limpiarPagina" class="btn waves-effect waves-light red col s12 m4">Limpiar y Actualizar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Importar Materialize JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#servicioSelect').formSelect();
+            // Función para limpiar la selección del cuadro de selección de servicios
+            $('#limpiarSeleccion').click(function () {
+                $('#servicioSelect').val('');
+                $('#servicioSelect').formSelect();
+            });
+
+
+
+            // Función para seleccionar servicios en desorden
+            // Función para seleccionar servicios en desorden
+            // Variable para verificar si se está simulando Ctrl
+            // Variable para contar la cantidad de servicios seleccionados
+            var serviciosSeleccionados = 0;
+
+            // Función para cambiar el color del botón cuando se hace clic
+            $('#seleccionarServicios').click(function () {
+                if (serviciosSeleccionados >= 2 && serviciosSeleccionados <= 4) {
+                    $(this).toggleClass('mouse-clicked'); // Cambiar el color del botón al hacer clic
+                }
+            });
+
+            // Función para simular la presión del botón Ctrl
+            $(document).keydown(function (e) {
+                if (e.ctrlKey || e.metaKey) {
+                    $('#seleccionarServicios').addClass('ctrl-pressed'); // Agregar clase cuando se presiona Ctrl
+                }
+            });
+
+            // Función para simular la liberación del botón Ctrl
+            $(document).keyup(function (e) {
+                if (!e.ctrlKey && !e.metaKey) {
+                    $('#seleccionarServicios').removeClass('ctrl-pressed'); // Eliminar clase cuando se suelta Ctrl
+                }
+            });
+
+            // Función para manejar la selección de servicios
+            $('#servicioSelect').change(function () {
+                serviciosSeleccionados = $('#servicioSelect option:selected').length;
+
+                if (serviciosSeleccionados >= 2 && serviciosSeleccionados <= 4) {
+                    $('#seleccionarServicios').prop('disabled', false); // Habilitar el botón si se seleccionan entre 2 y 4 servicios
+                } else {
+                    $('#seleccionarServicios').prop('disabled', true); // Deshabilitar el botón si no se cumplen las condiciones
+                }
+            });
+
+
+
+               // Evento de clic para el botón de limpiar y actualizar
+    $('#limpiarPagina').click(function () {
+        // Limpiar los campos de entrada y selección
+        $('#clienteNombre').val('');
+        $('#clienteDireccion').val('');
+        $('#clienteContacto').val('');
+        $('#cantidadProducto1').val('');
+        $('#cantidadProducto2').val('');
+        $('#cantidadServicio').val('');
+        $('#servicioSelect').val('');
+        // Deshabilitar el botón de seleccionar servicios si está habilitado
+        $('#seleccionarServicios').prop('disabled', true);
+        // Recargar la página
+        location.reload();
+    });
+
+            // Cargar opciones de clientes, productos y servicios al cargar la página
+            cargarClientes();
+            cargarProductos();
+            cargarServicios();
+
+            $('#formVenta').submit(function (event) {
+                event.preventDefault();
+                // Obtener los datos del formulario
+                var clienteId = $('#clienteNombre').val();
+                var clienteDireccion = $('#clienteDireccion').val();
+                var clienteContacto = $('#clienteContacto').val();
+                var producto1Id = $('#producto1Select').val();
+                var cantidadProducto1 = $('#cantidadProducto1').val();
+                var producto2Id = $('#producto2Select').val();
+                var cantidadProducto2 = $('#cantidadProducto2').val();
+                var servicioIds = $('#servicioSelect').val(); // Obtener los IDs de los servicios seleccionados
+                var cantidadServicio = $('#cantidadServicio').val();
+
+                // Construir el objeto de ventaRequest
+                var ventaRequest = {
+                    clienta: {
+                        id: clienteId,
+                        direccion: clienteDireccion,
+                        informacionContacto: clienteContacto
+                    },
+                    itemsProductos: [
+                        {
+                            producto: {
+                                id: producto1Id,
+                                nombre: $('#producto1Select option:selected').text(), // Nombre del producto seleccionado
+                                precio: parseFloat($('#producto1Select option:selected').data('precio')) // Precio del producto seleccionado
+                            },
+                            cantidad: cantidadProducto1
+                        },
+                        {
+                            producto: {
+                                id: producto2Id,
+                                nombre: $('#producto2Select option:selected').text(), // Nombre del producto seleccionado
+                                precio: parseFloat($('#producto2Select option:selected').data('precio')) // Precio del producto seleccionado
+                            },
+                            cantidad: cantidadProducto2
+                        }
+                    ],
+                    itemsServicios: []
+                };
+
+                // Agregar cada servicio seleccionado al objeto de ventaRequest
+                $.each(servicioIds, function (index, servicioId) {
+                    ventaRequest.itemsServicios.push({
+                        servicio: {
+                            id: servicioId,
+                            nombre: $('#servicioSelect option[value="' + servicioId + '"]').text(), // Nombre del servicio seleccionado
+                            precio: parseFloat($('#servicioSelect option[value="' + servicioId + '"]').data('precio')) // Precio del servicio seleccionado
+                        },
+                        cantidad: cantidadServicio
+                    });
+                });
+
+                // Calcular el precio total de los productos
+                var totalProductos = 0;
+                ventaRequest.itemsProductos.forEach(function (item) {
+                    totalProductos += item.producto.precio * item.cantidad;
+                });
+
+                // Calcular el precio total de los servicios
+                var totalServicios = 0;
+                ventaRequest.itemsServicios.forEach(function (item) {
+                    totalServicios += item.servicio.precio * item.cantidad;
+                });
+
+                // Calcular el precio total de la venta
+                var totalVenta = totalProductos + totalServicios;
+
+                // Realizar la solicitud POST al backend
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://localhost:8080/api/ventas/crearVenta', // Reemplaza 'puerto' con el puerto real de tu backend
+                    contentType: 'application/json',
+                    data: JSON.stringify(ventaRequest),
+                    success: function (response) {
+                        // Manejar la respuesta del backend si es necesario
+                        console.log('Venta creada:', response);
+                        alert('¡Venta creada exitosamente!');
+                    },
+                    error: function (xhr, status, error) {
+                        // Manejar errores si la solicitud falla
+                        console.error('Error al crear la venta:', error);
+                        alert('Error al crear la venta. Por favor, inténtalo de nuevo.');
+                    }
+                });
+            });
+            // Función para limpiar la selección del cuadro de selección de servicios
+
+
+            // Función para cargar las opciones de clientes desde el backend
+            function cargarClientes() {
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost:8080/api/clientes', // Reemplaza 'puerto' con el puerto real de tu backend
+                    success: function (clientes) {
+                        // Llenar el menú desplegable de clientes con los nombres obtenidos del backend
+                        var selectClientes = $('#clienteNombre');
+                        $.each(clientes, function (index, cliente) {
+                            selectClientes.append($('<option>', {
+                                value: cliente.id,
+                                text: cliente.nombre
+                            }));
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error al cargar los clientes:', error);
+                    }
+                });
+            }
+
+            // Función para cargar las opciones de productos desde el backend
+            function cargarProductos() {
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost:8080/api/productos', // Reemplaza 'puerto' con el puerto real de tu backend
+                    success: function (productos) {
+                        // Llenar los menús desplegables de productos con las opciones obtenidas del backend
+                        var selectProductos1 = $('#producto1Select');
+                        var selectProductos2 = $('#producto2Select');
+                        $.each(productos, function (index, producto) {
+                            selectProductos1.append($('<option>', {
+                                value: producto.id,
+                                text: producto.nombre,
+                                'data-precio': producto.precio // Almacenar el precio como atributo de datos en la opción
+                            }));
+                            selectProductos2.append($('<option>', {
+                                value: producto.id,
+                                text: producto.nombre,
+                                'data-precio': producto.precio // Almacenar el precio como atributo de datos en la opción
+                            }));
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error al cargar los productos:', error);
+                    }
+                });
+            }
+
+            // Función para cargar las opciones de servicios desde el backend
+            function cargarServicios() {
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost:8080/api/servicios', // Reemplaza 'puerto' con el puerto real de tu backend
+                    success: function (servicios) {
+                        // Llenar el menú desplegable de servicios con las opciones obtenidas del backend
+                        var selectServicios = $('#servicioSelect');
+                        $.each(servicios, function (index, servicio) {
+                            selectServicios.append($('<option>', {
+                                value: servicio.id,
+                                text: servicio.nombre,
+                                'data-precio': servicio.precio // Almacenar el precio como atributo de datos en la opción
+                            }));
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error al cargar los servicios:', error);
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos</title>
+    <!-- Importar Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Productos</h2>
+        <form id="productoForm">
+            <div class="input-field">
+                <input type="text" id="nombre" class="validate">
+                <label for="nombre">Nombre del Producto</label>
+            </div>
+            <div class="input-field">
+                <textarea id="descripcion" class="materialize-textarea"></textarea>
+                <label for="descripcion">Descripción</label>
+            </div>
+            <div class="input-field">
+                <input type="number" id="precio" class="validate">
+                <label for="precio">Precio</label>
+            </div>
+            <div class="input-field">
+                <input type="number" id="cantidadEnStock" class="validate">
+                <label for="cantidadEnStock">Cantidad en Stock</label>
+            </div>
+            <div class="input-field">
+                <input type="text" id="tipo" class="validate">
+                <label for="tipo">Tipo</label>
+            </div>
+            <button class="btn waves-effect waves-light" type="submit" name="action">Agregar
+                <i class="material-icons right">send</i>
+            </button>
+        </form>
+    </div>
+
+    <!-- Importar jQuery y Materialize JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>
